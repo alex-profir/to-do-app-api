@@ -1,21 +1,23 @@
 import express from 'express';
 import admin from './user.json';
+import passport from 'passport';
 const authRouter = express.Router();
 
-authRouter.route('/login').post((req, res, ) => {
-    if (req.body !== null) {
-        const { email, password } = req.body;
-        if (email === admin.email && password === admin.password) {
-            res.json(admin);
-            res.status(200);
+authRouter.route('/getUser')
+    .all((req, res, next) => {
+        if (req.user) {
+            next();
         } else {
-            res.json({ status: 400, message: "Bad Request" });
-            res.status(400);
+            res.redirect('/');
+            res.writeHead(401);
         }
-    } else {
-        res.json({ status: 404, message: "Not Found" });
-        res.status(404);
-    }
-});
-
+    })
+    .get((req, res) => {
+        res.json(admin);
+    });
+authRouter.route('/login')
+    .post(passport.authenticate('local', {
+        successRedirect: "/auth/getUser",
+        failureFlash: 'Invalid username or password.',
+    }));
 export default authRouter;
