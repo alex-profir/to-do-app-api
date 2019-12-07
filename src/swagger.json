@@ -9,27 +9,33 @@
     "basePath": "",
     "tags": [
         {
-            "name": "Test",
-            "description": "Just testin' around"
-        },
-        {
             "name": "Auth",
             "description": "Auth Router"
+        },
+        {
+            "name": "Todos",
+            "description": "Todos"
         }
     ],
     "paths": {
-        "/stuff": {
+        "/todo/getTodos": {
             "get": {
                 "tags": [
-                    "Test"
+                    "Todos"
                 ],
-                "summary": "Return a nice message",
+                "summary": "Get all todos",
+                "produces": [
+                    "application/json"
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/msg"
+                            "$ref": "#/definitions/todo"
                         }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
                     }
                 }
             }
@@ -69,6 +75,22 @@
         }
     },
     "definitions": {
+        "todo": {
+            "properties": {
+                "task": {
+                    "type": "string"
+                },
+                "who": {
+                    "type": "string"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "done": {
+                    "type": "boolean"
+                }
+            }
+        },
         "user": {
             "properties": {
                 "email": {

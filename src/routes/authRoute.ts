@@ -16,8 +16,7 @@ authRouter.route('/getUser')
         res.json(admin);
     });
 authRouter.route('/login')
-    .post(passport.authenticate('local', {
-        successRedirect: "/auth/getUser",
-        failureFlash: 'Invalid username or password.',
-    }));
+    .post(passport.authenticate('local'), (req, res) => {
+        res.json(admin);
+    });
 export default authRouter;

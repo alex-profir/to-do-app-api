@@ -1,0 +1,38 @@
+[
+    {
+        "task": "get milk",
+        "who": "Scott",
+        "dueDate": "today",
+        "done": false
+    },
+    {
+        "task": "get broccoli",
+        "who": "Elisabeth",
+        "dueDate": "12/07/2019",
+        "done": false
+    },
+    {
+        "task": "Play Pacanele",
+        "who": "Mircea",
+        "dueDate": "12/06/2019",
+        "done": true
+    },
+    {
+        "task": "Do stuff",
+        "who": "Nigel",
+        "dueDate": "08/24/2009",
+        "done": false
+    },
+    {
+        "task": "get money",
+        "who": null,
+        "dueDate": "today",
+        "done": true
+    },
+    {
+        "task": "Ore wa",
+        "who": "Nany",
+        "dueDate": null,
+        "done": false
+    }
+]

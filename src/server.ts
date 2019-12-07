@@ -9,6 +9,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passportConfig from './config/passport';
+import todoRouter from './routes/todoRoute';
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -23,6 +24,7 @@ passportConfig(app);
 app.use(express.static(path.join(__dirname, '../public/')));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/auth', authRouter);
+app.use('/todo', todoRouter);
 app.get('/stuff', (req, res) => {
     res.json({
         message: "Hello there",
