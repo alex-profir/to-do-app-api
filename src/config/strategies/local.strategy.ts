@@ -7,15 +7,12 @@ export default function localStragegy() {
         {
             usernameField: 'email', passwordField: 'password'
         }, (email, password, done) => {
-            console.log(email, password);
             if (email === admin.email && password === admin.password) {
-                console.log('yes');
                 const user = {
                     email, password
                 }
                 done(null, user);
             } else {
-                console.log('no');
                 done(null, false);
             }
         }));

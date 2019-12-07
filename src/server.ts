@@ -6,12 +6,13 @@ import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from './swagger.json';
 import authRouter from './routes/authRoute';
 import bodyParser from 'body-parser';
+import expressValidator from 'express-validator';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passportConfig from './config/passport';
 import todoRouter from './routes/todoRoute';
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 app.use(morgan('tiny'));
 app.use(bodyParser.json());
