@@ -1,5 +1,4 @@
 import express from 'express';
-import admin from './user.json';
 import { MongoClient } from 'mongodb';
 import passport from 'passport';
 const authRouter = express.Router();

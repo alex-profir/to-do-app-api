@@ -1,7 +1,7 @@
 import express from 'express';
-import todos from './todos.json';
-import fs from 'fs';
-import { MongoClient, ObjectID, ObjectId } from 'mongodb';
+import { MongoClient, ObjectID } from 'mongodb';
+import moment from 'moment';
+import { Todo } from '../models/todo';
 const todoRouter = express.Router();
 
 function router() {
@@ -23,25 +23,66 @@ function router() {
                 client.close();
             });
         });
+    todoRouter.route('/getTodosByStatus')
+        .post((req, res) => {
+            const { status } = req.body;
+            if (status === "planned" || status === "in progress" || status === "done" || status === "blocked") {
+                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
+                const client = new MongoClient(uri, { useNewUrlParser: true });
+                client.connect(async err => {
+                    const collection = client.db("todo").collection("todos");
+                    const response = await collection.find({ status }).toArray();
+                    res.json(response);
+                    client.close();
+                });
+            } else {
+                res.writeHead(400);
+                res.end();
+            }
+        });
     todoRouter.route('/addTodo')
         .post((req, res) => {
-            const { task, who, dueDate, done } = req.body;
+            const { title, responsable, dueDate } = req.body;
             // some bs way but fuck it
-            if (!task || !who || !dueDate || !done || typeof done !== "boolean" || typeof task !== "string" || typeof who !== "string" || typeof dueDate !== "string") {
+            if (!title || !responsable || !dueDate || typeof title !== "string" || typeof responsable !== "string" || !moment(dueDate, moment.ISO_8601, true).isValid()) {
                 res.writeHead(400)
                 res.write("Missing props");
                 res.end();
+            } else {
+                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
+                const client = new MongoClient(uri, { useNewUrlParser: true });
+                client.connect(async err => {
+                    const collection = client.db("todo").collection("todos");
+                    const newTask: Todo = { title, responsable, dueDate, status: "planned" };
+                    const response = await collection.insertOne(newTask);
+                    res.json(response.ops[0]);
+                    client.close();
+                });
             }
-
-            const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
-            const client = new MongoClient(uri, { useNewUrlParser: true });
-            client.connect(async err => {
-                const collection = client.db("todo").collection("todos");
-                const newTask = { task, who, dueDate, done };
-                const response = await collection.insertOne(newTask);
-                res.json(response.ops[0]);
-                client.close();
-            });
+        });
+    todoRouter.route("/updateTodoStatus/:id")
+        .post((req, res) => {
+            const { status } = req.body;
+            const id = req.params.id;
+            if (ObjectID.isValid(id) && (status === "planned" || status === "in progress" || status === "done" || status === "blocked")) {
+                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
+                const client = new MongoClient(uri, { useNewUrlParser: true });
+                client.connect(async err => {
+                    const collection = client.db("todo").collection("todos");
+                    const obj = { _id: new ObjectID(id) };
+                    const response = await collection.updateOne(obj, { $set: { status } });
+                    if (response === null) {
+                        res.json({});
+                    }
+                    else {
+                        res.json({ message: "Status updated" });
+                    }
+                    client.close();
+                });
+            } else {
+                res.writeHead(400);
+                res.end();
+            }
         });
     todoRouter.route('/getTodoById/:id')
         .get((req, res) => {
@@ -65,9 +106,7 @@ function router() {
                     client.close();
                 });
             }
-        })
-
-
+        });
     todoRouter.route('/deleteTodo/:id')
         .delete((req, res) => {
             const id = req.params.id;

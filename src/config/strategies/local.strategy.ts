@@ -1,5 +1,4 @@
 import passport from 'passport';
-import admin from '../../routes/user.json';
 import { Strategy } from 'passport-local';
 import { MongoClient } from 'mongodb';
 

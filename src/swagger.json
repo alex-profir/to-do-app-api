@@ -40,6 +40,39 @@
                 }
             }
         },
+        "/todo/getTodosByStatus": {
+            "post": {
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Get all todos filtered by the status",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": "true",
+                        "description": "Status object",
+                        "schema": {
+                            "$ref": "#/definitions/status"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/todo"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        },
         "/todo/getTodoById/{todoId}": {
             "get": {
                 "tags": [
@@ -90,6 +123,45 @@
                         "description": "todo object example",
                         "schema": {
                             "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        },
+        "/todo/updateTodoStatus/{todoId}": {
+            "post": {
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Update the status of todo",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "todoId",
+                        "required": true,
+                        "description": "todo object example",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": "true",
+                        "description": "Status object",
+                        "schema": {
+                            "$ref": "#/definitions/status"
                         }
                     }
                 ],
@@ -173,36 +245,45 @@
     "definitions": {
         "todo": {
             "properties": {
-                "id": {
-                    "type": "number"
-                },
-                "task": {
+                "_id": {
                     "type": "string"
                 },
-                "who": {
+                "title": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "planned",
+                        "in progress",
+                        "done",
+                        "blocked"
+                    ]
+                },
+                "responsable": {
                     "type": "string"
                 },
                 "dueDate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date"
                 },
-                "done": {
-                    "type": "boolean"
+                "finnishedDate": {
+                    "type": "string",
+                    "format": "date"
                 }
             }
         },
         "todo2": {
             "properties": {
-                "task": {
+                "title": {
                     "type": "string"
                 },
-                "who": {
+                "responsable": {
                     "type": "string"
                 },
                 "dueDate": {
-                    "type": "string"
-                },
-                "done": {
-                    "type": "boolean"
+                    "type": "string",
+                    "format": "date"
                 }
             }
         },
@@ -227,6 +308,19 @@
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "status": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "planned",
+                        "in progress",
+                        "done",
+                        "blocked"
+                    ]
                 }
             }
         }
