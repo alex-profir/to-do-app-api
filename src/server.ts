@@ -22,10 +22,9 @@ app.use(session({ secret: "Whatever" }));
 
 passportConfig(app);
 
-app.use(express.static(path.join(__dirname, '../public/')));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use('/auth', authRouter);
-app.use('/todo', todoRouter);
+app.use('/auth', authRouter());
+app.use('/todo', todoRouter());
 app.get('/stuff', (req, res) => {
     res.json({
         message: "Hello there",
