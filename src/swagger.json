@@ -73,6 +73,39 @@
                 }
             }
         },
+        "/todo/getPagedTodos": {
+            "post": {
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Get all todos filtered by page",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": "true",
+                        "description": "Pagination object",
+                        "schema": {
+                            "$ref": "#/definitions/pagination"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/todo"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        },
         "/todo/getTodoById/{todoId}": {
             "get": {
                 "tags": [
@@ -321,6 +354,16 @@
                         "done",
                         "blocked"
                     ]
+                }
+            }
+        },
+        "pagination": {
+            "properties": {
+                "pageSize": {
+                    "type": "number"
+                },
+                "pageNr": {
+                    "type": "number"
                 }
             }
         }

@@ -5,13 +5,13 @@ import { Todo } from '../models/todo';
 const todoRouter = express.Router();
 
 function router() {
-    // todoRouter.use((req, res, next) => {
-    //     if (req.user) {
-    //         next();
-    //     } else {
-    //         res.status(401).send()
-    //     }
-    // })
+    todoRouter.use((req, res, next) => {
+        if (req.user) {
+            next();
+        } else {
+            res.status(401).send()
+        }
+    })
     todoRouter.route('/getTodos')
         .get((req, res) => {
             const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
@@ -23,10 +23,32 @@ function router() {
                 client.close();
             });
         });
+    todoRouter.route('/getFilteredTodos')
+        .post((req, res) => {
+            const { pageSize, pageNr, key, status } = req.body;
+            if (typeof pageSize !== "number" || typeof pageNr !== "number") {
+                res.writeHead(400);
+                res.end();
+            }
+            if (status && (status !== "PLANNED" && status !== "IN_PROGRESS" && status !== "DONE" && status !== "BLOCKED")) {
+                res.writeHead(400);
+                res.end();
+            }
+            const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
+            const client = new MongoClient(uri, { useNewUrlParser: true });
+            client.connect(async err => {
+                let skips = pageSize * (pageNr - 1); 
+                skips = skips > 0 ? skips : 0;
+                const collection = client.db("todo").collection("todos");
+                const response = await collection.find({ $test: { $search: key || "" } }).skip(skips).limit(pageSize).toArray();
+                res.json(response);
+                client.close();
+            });
+        });
     todoRouter.route('/getTodosByStatus')
         .post((req, res) => {
             const { status } = req.body;
-            if (status === "planned" || status === "in progress" || status === "done" || status === "blocked") {
+            if (status === "PLANNED" || status === "IN_PROGRESS" || status === "DONE" || status === "BLOCKED") {
                 const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
@@ -53,7 +75,7 @@ function router() {
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
-                    const newTask: Todo = { title, responsable, dueDate, status: "planned" };
+                    const newTask: Todo = { title, responsable, dueDate, status: "PLANNED" };
                     const response = await collection.insertOne(newTask);
                     res.json(response.ops[0]);
                     client.close();
@@ -64,7 +86,7 @@ function router() {
         .post((req, res) => {
             const { status } = req.body;
             const id = req.params.id;
-            if (ObjectID.isValid(id) && (status === "planned" || status === "in progress" || status === "done" || status === "blocked")) {
+            if (ObjectID.isValid(id) && (status === "PLANNED" || status === "IN_PROGRESS" || status === "DONE" || status === "BLOCKED")) {
                 const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {

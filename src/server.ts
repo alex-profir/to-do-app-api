@@ -2,6 +2,7 @@ import express from 'express';
 import chalk from 'chalk';
 import morgan from 'morgan';
 import path from 'path';
+import cors from 'cors'
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from './swagger.json';
 import authRouter from './routes/authRoute';
@@ -19,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({ secret: "Whatever" }));
-
+app.use(cors());
 passportConfig(app);
 
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
