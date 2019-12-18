@@ -106,6 +106,39 @@
                 }
             }
         },
+        "/todo/getFilteredTodos": {
+            "post": {
+                "tags": [
+                    "Todos"
+                ],
+                "summary": "Get all todos filtered by page",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": "true",
+                        "description": "Pagination object",
+                        "schema": {
+                            "$ref": "#/definitions/pagination2"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/todo"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        },
         "/todo/getTodoById/{todoId}": {
             "get": {
                 "tags": [
@@ -287,10 +320,10 @@
                 "status": {
                     "type": "string",
                     "enum": [
-                        "planned",
-                        "in progress",
-                        "done",
-                        "blocked"
+                        "PLANNED",
+                        "IN_PROGRESS",
+                        "DONE",
+                        "BLOCKED"
                     ]
                 },
                 "responsable": {
@@ -349,10 +382,10 @@
                 "status": {
                     "type": "string",
                     "enum": [
-                        "planned",
-                        "in progress",
-                        "done",
-                        "blocked"
+                        "PLANNED",
+                        "IN_PROGRESS",
+                        "DONE",
+                        "BLOCKED"
                     ]
                 }
             }
@@ -364,6 +397,28 @@
                 },
                 "pageNr": {
                     "type": "number"
+                }
+            }
+        },
+        "pagination2": {
+            "properties": {
+                "pageSize": {
+                    "type": "number"
+                },
+                "pageNr": {
+                    "type": "number"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "PLANNED",
+                        "IN_PROGRESS",
+                        "DONE",
+                        "BLOCKED"
+                    ]
                 }
             }
         }

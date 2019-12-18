@@ -2,6 +2,7 @@ import express from 'express';
 import { MongoClient, ObjectID } from 'mongodb';
 import moment from 'moment';
 import { Todo } from '../models/todo';
+import { uri } from '../config/mongo';
 const todoRouter = express.Router();
 
 function router() {
@@ -11,14 +12,13 @@ function router() {
         } else {
             res.status(401).send()
         }
-    })
+    });
     todoRouter.route('/getTodos')
         .get((req, res) => {
-            const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
             const client = new MongoClient(uri, { useNewUrlParser: true });
             client.connect(async err => {
                 const collection = client.db("todo").collection("todos");
-                const response = await collection.find().toArray();
+                const response = (await collection.find().toArray()).reverse();
                 res.json(response);
                 client.close();
             });
@@ -31,17 +31,23 @@ function router() {
                 res.end();
             }
             if (status && (status !== "PLANNED" && status !== "IN_PROGRESS" && status !== "DONE" && status !== "BLOCKED")) {
-                res.writeHead(400);
+                res.json().writeHead(400);
                 res.end();
             }
-            const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
             const client = new MongoClient(uri, { useNewUrlParser: true });
             client.connect(async err => {
-                let skips = pageSize * (pageNr - 1); 
+                let skips = pageSize * (pageNr - 1);
                 skips = skips > 0 ? skips : 0;
                 const collection = client.db("todo").collection("todos");
-                const response = await collection.find({ $test: { $search: key || "" } }).skip(skips).limit(pageSize).toArray();
-                res.json(response);
+                const reg = new RegExp(key);
+                console.log(reg);
+                if (status) {
+                    const response = await collection.find({ status, name: reg || /./ }).skip(skips).limit(pageSize).toArray();
+                    res.json(response);
+                } else {
+                    const response = await collection.find({ name: reg || /./ }).skip(skips).limit(pageSize).toArray();
+                    res.json(response);
+                }
                 client.close();
             });
         });
@@ -49,7 +55,6 @@ function router() {
         .post((req, res) => {
             const { status } = req.body;
             if (status === "PLANNED" || status === "IN_PROGRESS" || status === "DONE" || status === "BLOCKED") {
-                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
@@ -71,7 +76,6 @@ function router() {
                 res.write("Missing props");
                 res.end();
             } else {
-                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
@@ -87,7 +91,6 @@ function router() {
             const { status } = req.body;
             const id = req.params.id;
             if (ObjectID.isValid(id) && (status === "PLANNED" || status === "IN_PROGRESS" || status === "DONE" || status === "BLOCKED")) {
-                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
@@ -113,7 +116,6 @@ function router() {
                 res.writeHead(400);
                 res.end();
             } else {
-                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
@@ -136,7 +138,6 @@ function router() {
                 res.writeHead(400);
                 res.end();
             } else {
-                const uri = `mongodb+srv://admin:admin@cluster0-6d7le.mongodb.net/todo?retryWrites=true&w=majority`;
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
@@ -144,7 +145,7 @@ function router() {
                     const response = await collection.deleteOne(obj);
                     console.log(response.deletedCount);
                     if (response.deletedCount! < 1) {
-                        res.status(404).json({ message: "Object was not found in db" }).send;
+                        res.status(404).json({ message: "Object was not found in db" }).send();
                     }
                     else {
                         res.json({ message: "Deleted was successful" });
