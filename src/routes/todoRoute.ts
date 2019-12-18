@@ -6,13 +6,13 @@ import { uri } from '../config/mongo';
 const todoRouter = express.Router();
 
 function router() {
-    todoRouter.use((req, res, next) => {
-        if (req.user) {
-            next();
-        } else {
-            res.status(401).send()
-        }
-    });
+    // todoRouter.use((req, res, next) => {
+    //     if (req.user) {
+    //         next();
+    //     } else {
+    //         res.status(401).send()
+    //     }
+    // });
     todoRouter.route('/getTodos')
         .get((req, res) => {
             const client = new MongoClient(uri, { useNewUrlParser: true });
@@ -95,7 +95,16 @@ function router() {
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
                     const obj = { _id: new ObjectID(id) };
-                    const response = await collection.updateOne(obj, { $set: { status } });
+                    let send = {}
+                    if (status === "DONE") {
+                        const date = moment().format();
+                        send = { $set: { status, finnishedDate: date } }
+                        // Object.defineProperty(send.$set, "finnishedDate", { value: date });
+                    } else {
+                        send = { $set: { status } }
+                    }
+                    console.log(send);
+                    const response = await collection.updateOne(obj, send);
                     if (response === null) {
                         res.json({});
                     }
