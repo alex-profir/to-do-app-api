@@ -27,11 +27,11 @@ function router() {
         .post((req, res) => {
             const { pageSize, pageNr, key, status } = req.body;
             if (typeof pageSize !== "number" || typeof pageNr !== "number") {
-                res.writeHead(400);
+                res.json({ message: "Invalid Props" }).writeHead(400);
                 res.end();
             }
             if (status && (status !== "PLANNED" && status !== "IN_PROGRESS" && status !== "DONE" && status !== "BLOCKED")) {
-                res.json().writeHead(400);
+                res.json({ message: "Invalid Status" }).writeHead(400);
                 res.end();
             }
             const client = new MongoClient(uri, { useNewUrlParser: true });
@@ -40,12 +40,11 @@ function router() {
                 skips = skips > 0 ? skips : 0;
                 const collection = client.db("todo").collection("todos");
                 const reg = new RegExp(key);
-                console.log(reg);
                 if (status) {
-                    const response = await collection.find({ status, name: reg || /./ }).skip(skips).limit(pageSize).toArray();
+                    const response = await collection.find<Todo>({ status, title: reg || /./ }).skip(skips).limit(pageSize).toArray();
                     res.json(response);
                 } else {
-                    const response = await collection.find({ name: reg || /./ }).skip(skips).limit(pageSize).toArray();
+                    const response = await collection.find<Todo>({ title: reg || /./ }).skip(skips).limit(pageSize).toArray();
                     res.json(response);
                 }
                 client.close();
@@ -98,12 +97,11 @@ function router() {
                     let send = {}
                     if (status === "DONE") {
                         const date = moment().format();
-                        send = { $set: { status, finnishedDate: date } }
+                        send = { $set: { status, finishedDate: date } }
                         // Object.defineProperty(send.$set, "finnishedDate", { value: date });
                     } else {
                         send = { $set: { status } }
                     }
-                    console.log(send);
                     const response = await collection.updateOne(obj, send);
                     if (response === null) {
                         res.json({});
