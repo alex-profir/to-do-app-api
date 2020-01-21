@@ -18,7 +18,7 @@ function router() {
             const client = new MongoClient(uri, { useNewUrlParser: true });
             client.connect(async err => {
                 const collection = client.db("todo").collection("todos");
-                const response = (await collection.find().toArray()).reverse();
+                const response = (await collection.find().toArray());
                 res.json(response);
                 client.close();
             });
@@ -78,7 +78,8 @@ function router() {
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
-                    const newTask: Todo = { title, responsable, dueDate, status: "PLANNED" };
+                    const sendDate = moment(dueDate).format();
+                    const newTask: Todo = { title, responsable, dueDate:moment(dueDate).toDate(), status: "PLANNED" };
                     const response = await collection.insertOne(newTask);
                     res.json(response.ops[0]);
                     client.close();
