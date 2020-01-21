@@ -78,8 +78,7 @@ function router() {
                 const client = new MongoClient(uri, { useNewUrlParser: true });
                 client.connect(async err => {
                     const collection = client.db("todo").collection("todos");
-                    const sendDate = moment(dueDate).format();
-                    const newTask: Todo = { title, responsable, dueDate:moment(dueDate).toDate(), status: "PLANNED" };
+                    const newTask: Todo = { title, responsable, dueDate: moment(dueDate).add(1, 'day').subtract(1, 'second').toDate(), status: "PLANNED" };
                     const response = await collection.insertOne(newTask);
                     res.json(response.ops[0]);
                     client.close();
