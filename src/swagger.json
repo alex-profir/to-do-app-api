@@ -7,8 +7,7 @@
     },
     "host": "localhost:4000",
     "basePath": "",
-    "tags": [
-        {
+    "tags": [{
             "name": "Auth",
             "description": "Auth Router"
         },
@@ -49,17 +48,15 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "required": "true",
-                        "description": "Status object",
-                        "schema": {
-                            "$ref": "#/definitions/status"
-                        }
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "required": "true",
+                    "description": "Status object",
+                    "schema": {
+                        "$ref": "#/definitions/status"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -82,17 +79,15 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "required": "true",
-                        "description": "Pagination object",
-                        "schema": {
-                            "$ref": "#/definitions/pagination2"
-                        }
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "required": "true",
+                    "description": "Pagination object",
+                    "schema": {
+                        "$ref": "#/definitions/pagination2"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -115,17 +110,15 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "todoId",
-                        "required": true,
-                        "description": "todo id",
-                        "schema": {
-                            "type": "number"
-                        }
+                "parameters": [{
+                    "in": "path",
+                    "name": "todoId",
+                    "required": true,
+                    "description": "todo id",
+                    "schema": {
+                        "type": "number"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -148,17 +141,15 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "todoId",
-                        "required": true,
-                        "description": "todo object example",
-                        "schema": {
-                            "type": "number"
-                        }
+                "parameters": [{
+                    "in": "path",
+                    "name": "todoId",
+                    "required": true,
+                    "description": "todo object example",
+                    "schema": {
+                        "type": "number"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -178,8 +169,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
+                "parameters": [{
                         "in": "path",
                         "name": "todoId",
                         "required": true,
@@ -217,22 +207,51 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "required": true,
-                        "description": "todo object example",
-                        "schema": {
-                            "$ref": "#/definitions/todo2"
-                        }
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "required": true,
+                    "description": "todo object example",
+                    "schema": {
+                        "$ref": "#/definitions/todo2"
                     }
-                ],
+                }],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/todo"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed. Bad post data."
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Add user in system",
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "required": true,
+                    "description": "Register object example",
+                    "schema": {
+                        "$ref": "#/definitions/user"
+                    }
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user"
                         }
                     },
                     "400": {
@@ -247,17 +266,15 @@
                     "Auth"
                 ],
                 "summary": "Login into the system",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "required": true,
-                        "description": "Login object example",
-                        "schema": {
-                            "$ref": "#/definitions/user"
-                        }
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "required": true,
+                    "description": "Login object example",
+                    "schema": {
+                        "$ref": "#/definitions/user"
                     }
-                ],
+                }],
                 "produces": [
                     "application/json"
                 ],
